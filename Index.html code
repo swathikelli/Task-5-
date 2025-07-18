@@ -1,0 +1,342 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>The Web Catalyst - Your Modern Blog</title>
+    <!-- Tailwind CSS CDN for quick styling -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Google Font: Inter (Modern, Clean) -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        /* Apply Inter font family globally and smooth scrolling */
+        body {
+            font-family: 'Inter', sans-serif;
+            scroll-behavior: smooth;
+        }
+        /* Custom scrollbar for better aesthetics */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #f1f1f1;
+            border-radius: 10px;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #a78bfa; /* Violet-400 */
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #8b5cf6; /* Violet-500 */
+        }
+        /* Simple animation for content fading in */
+        @keyframes fadeInScaleUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px) scale(0.98);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0) scale(1);
+            }
+        }
+        .animate-fade-in-up {
+            animation: fadeInScaleUp 0.6s ease-out forwards;
+        }
+    </style>
+</head>
+<body class="bg-gray-50 text-gray-800 min-h-screen flex flex-col">
+
+    <!-- Global Message Display (for notifications like "Post Not Found") -->
+    <div id="global-message" class="fixed top-4 left-1/2 -translate-x-1/2 z-50 p-4 rounded-lg shadow-lg text-white font-semibold transition-all duration-300 ease-in-out transform opacity-0 scale-95" style="display: none;">
+        <!-- Message content will be injected here -->
+    </div>
+
+    <!-- Navbar -->
+    <nav class="bg-violet-700 p-4 shadow-xl sticky top-0 z-40">
+        <div class="container mx-auto flex justify-between items-center">
+            <div id="brand-logo" class="text-white text-3xl font-extrabold cursor-pointer hover:text-violet-200 transition-colors duration-300">
+                The Web Catalyst
+            </div>
+            <div class="flex items-center space-x-6">
+                <button id="nav-home" class="text-white hover:text-violet-200 px-3 py-2 rounded-md text-lg font-medium transition-colors duration-300">
+                    Home
+                </button>
+                <button id="nav-blog" class="text-white hover:text-violet-200 px-3 py-2 rounded-md text-lg font-medium transition-colors duration-300">
+                    Blog
+                </button>
+                <button id="nav-about" class="text-white hover:text-violet-200 px-3 py-2 rounded-md text-lg font-medium transition-colors duration-300">
+                    About
+                </button>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content Area -->
+    <main id="app-content" class="container mx-auto p-6 flex-grow">
+        <!-- Dynamic content will be loaded here by JavaScript -->
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-gray-900 text-gray-300 text-center p-6 mt-12 shadow-inner">
+        <div class="container mx-auto">
+            <p>&copy; <span id="current-year"></span> The Web Catalyst. All rights reserved. | Built with ❤️ HTML, CSS, & JavaScript</p>
+        </div>
+    </footer>
+
+    <script>
+        // --- Blog Post Data ---
+        // Using Lorem Picsum with specific 'seed' values to get more visually relevant images
+        // for each blog post, enhancing the "cool" and cohesive feel of the app.
+        const blogPosts = [
+            {
+                id: 1,
+                title: 'Mastering Responsive Design: A Mobile-First Approach',
+                author: 'Jane Doe',
+                date: '2023-10-26',
+                excerpt: 'Learn the foundational principles of responsive web design, focusing on building for mobile devices first before scaling up to larger screens. Dive into media queries, flexible grids, and fluid images.',
+                content: `
+                    <p>In today's multi-device world, responsive design isn't just a best practice; it's a necessity. Users access websites from a myriad of screen sizes, from tiny smartwatches to large desktop monitors. A truly user-friendly experience means your content adapts seamlessly.</p>
+                    <p>The "mobile-first" approach advocates designing for the smallest screen initially. This forces you to prioritize content and functionality, stripping away non-essential elements for a lean, performant experience. Only then do you progressively enhance for larger viewports using media queries.</p>
+                    <h3>Key Principles:</h3>
+                    <ul>
+                        <li><strong>Fluid Grids:</strong> Use percentages or viewport units (vw, vh) for layout widths, rather than fixed pixels. This allows elements to stretch and shrink proportionally.</li>
+                        <li><strong>Flexible Images:</strong> Ensure images never break their containers. A simple <code>img { max-width: 100%; height: auto; }</code> can save you a lot of headaches.</li>
+                        <li><strong>Media Queries:</strong> The magic behind adapting styles. These CSS rules apply styles based on device characteristics like screen width.</li>
+                    </ul>
+                    <pre><code class="language-css">/* Mobile-first base styles */
+body {
+    font-size: 16px;
+}
+
+/* Tablet styles */
+@media (min-width: 768px) {
+    body {
+        font-size: 18px;
+    }
+    .grid-container {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 20px;
+    }
+}
+
+/* Desktop styles */
+@media (min-width: 1024px) {
+    body {
+        font-size: 20px;
+    }
+    .grid-container {
+        grid-template-columns: 1fr 2fr 1fr;
+    }
+}</code></pre>
+                    <p>By embracing mobile-first, you're not just making your site responsive; you're building a more focused, accessible, and performant web experience from the ground up.</p>
+                `,
+                image: 'https://picsum.photos/seed/responsive-web-design-ui/600/400',
+                tags: ['Web Design', 'CSS', 'Mobile', 'UX']
+            },
+            {
+                id: 2,
+                title: 'JavaScript Optimization Tips for Smoother Apps',
+                author: 'John Smith',
+                date: '2023-11-01',
+                excerpt: 'Unlock the secrets to writing highly performant JavaScript. From minimizing DOM manipulations to efficient event handling, these tips will make your web applications buttery smooth.',
+                content: `
+                    <p>JavaScript is the engine of interactivity on the web, but inefficient code can quickly lead to sluggish performance. Optimizing your JavaScript is crucial for a smooth user experience, especially on lower-powered devices.</p>
+                    <p>Here are some key areas to focus on:</p>
+                    <h3>DOM Manipulation Efficiency:</h3>
+                    <p>Directly manipulating the DOM is expensive. Minimize repaint and reflow operations:</p>
+                    <ul>
+                        <li><strong>Batch DOM Updates:</strong> Instead of making multiple changes one by one, make all changes to an element and then append it to the DOM, or use a document fragment.</li>
+                        <li><strong>Cache DOM Elements:</strong> Store references to frequently accessed DOM elements in variables instead of querying them repeatedly.</li>
+                    </ul>
+                    <pre><code class="language-js">// Inefficient: Multiple DOM writes
+for (let i = 0; i &lt; 100; i++) {
+    document.getElementById('list').innerHTML += '&lt;li&gt;Item ' + i + '&lt;/li&gt;';
+}
+
+// Efficient: Single DOM write using a fragment
+const fragment = document.createDocumentFragment();
+for (let i = 0; i &lt; 100; i++) {
+    const li = document.createElement('li');
+    li.textContent = 'Item ' + i;
+    fragment.appendChild(li);
+}
+document.getElementById('list').appendChild(fragment);</code></pre>
+                    <h3>Event Delegation:</h3>
+                    <p>Instead of attaching an event listener to every single list item, attach one listener to their common parent. This is more memory-efficient and performs better, especially for dynamic lists.</p>
+                    <pre><code class="language-js">// Bad: Many listeners
+// document.querySelectorAll('.item').forEach(item => {
+// item.addEventListener('click', handleItemClick);
+// });
+
+// Good: One listener on parent
+document.getElementById('parent-list').addEventListener('click', function(event) {
+    if (event.target.classList.contains('item')) {
+        // handleItemClick(event.target);
+    }
+});</code></pre>
+                    <p>These techniques, among others like avoiding global variables and optimizing loops, can significantly boost your application's responsiveness and overall performance.</p>
+                `,
+                image: 'https://picsum.photos/seed/javascript-performance-code/600/400',
+                tags: ['JavaScript', 'Performance', 'Optimization', 'Web Development']
+            },
+            {
+                id: 3,
+                title: 'Unlocking Web Fonts: Performance & Aesthetics',
+                author: 'Alice Brown',
+                date: '2023-11-05',
+                excerpt: 'Web fonts can drastically improve your site\'s aesthetics but can impact performance. Discover strategies to load them efficiently without sacrificing user experience or visual appeal.',
+                content: `
+                    <p>Custom web fonts are powerful tools for branding and visual identity. However, they can introduce a "Flash of Unstyled Text" (FOUT) or "Flash of Invisible Text" (FOIT) if not loaded optimally, hurting user experience.</p>
+                    <h3>Strategies for Efficient Font Loading:</h3>
+                    <ul>
+                        <li><strong><code>font-display</code> Property:</strong> This CSS property controls how a font face is displayed based on whether it has downloaded and is ready to use. Common values include <code>swap</code> (recommended for most cases, shows fallback then swaps), <code>block</code> (hides text until font loads), and <code>fallback</code>.</li>
+                        <li><strong>Preload Fonts:</strong> Use <code>&lt;link rel="preload"&gt;</code> to tell the browser to fetch important fonts early in the loading process.</li>
+                        <li><strong>Subset Fonts:</strong> If you only use a few characters (e.g., icons, numbers), create a subset of the font to reduce file size.</li>
+                        <li><strong>Cache Fonts:</strong> Ensure your server sends appropriate caching headers for font files.</li>
+                    </ul>
+                    <pre><code class="language-css">/* Example using font-display: swap */
+@font-face {
+    font-family: 'MyCustomFont';
+    src: url('/fonts/mycustomfont.woff2') format('woff2');
+    font-weight: 400;
+    font-style: normal;
+    font-display: swap; /* Important for performance */
+}</code></pre>
+                    <pre><code class="language-html">&lt;!-- Preload a critical font --&gt;
+&lt;link rel="preload" href="/fonts/mycustomfont.woff2" as="font" type="font/woff2" crossorigin&gt;</code></pre>
+                    <p>By strategically loading your web fonts, you can achieve stunning typography without compromising on page load speed or perceived performance.</p>
+                `,
+                image: 'https://picsum.photos/seed/web-typography-fonts/600/400',
+                tags: ['Web Fonts', 'Performance', 'CSS', 'Typography']
+            },
+            {
+                id: 4,
+                title: 'The Power of CSS Grid: Layouts Redefined',
+                author: 'Bob Johnson',
+                date: '2023-11-10',
+                excerpt: 'CSS Grid has revolutionized web layouts. Explore its capabilities for creating complex, two-dimensional designs with remarkable flexibility and ease, far beyond traditional floats or Flexbox.',
+                content: `
+                    <p>Before CSS Grid, creating complex web layouts often involved messy hacks with floats, or relying on JavaScript frameworks. CSS Grid introduces a powerful two-dimensional layout system that simplifies the creation of intricate designs, both fixed and flexible.</p>
+                    <h3>Why choose CSS Grid?</h3>
+                    <ul>
+                        <li><strong>Two-Dimensional Control:</strong> Manages both rows and columns simultaneously, unlike Flexbox which primarily handles one dimension.</li>
+                        <li><strong>Explicit Placement:</strong> Allows you to precisely place items on the grid using line numbers or named areas.</li>
+                        <li><strong>Responsiveness Built-in:</strong> Easily adapt grid layouts using media queries, and leverage functions like <code>minmax()</code> and <code>repeat()</code> for truly flexible tracks.</li>
+                    </ul>
+                    <pre><code class="language-css">.grid-container {
+    display: grid;
+    /* Create 3 columns: first and third are 1fr, middle is 2fr */
+    grid-template-columns: 1fr 2fr 1fr;
+    /* Create 2 rows with fixed heights */
+    grid-template-rows: 100px auto;
+    gap: 20px; /* Space between grid items */
+}
+
+.header {
+    grid-column: 1 / -1; /* Spans all columns */
+}
+
+.sidebar {
+    grid-row: 2;
+    grid-column: 1;
+}
+
+.main-content {
+    grid-row: 2;
+    grid-column: 2 / 4; /* Spans from column 2 to end */
+}</code></pre>
+                    <p>CSS Grid empowers developers to build layouts that are both robust and maintainable, making it an indispensable tool in modern web design.</p>
+                `,
+                image: 'https://picsum.photos/seed/css-grid-layout/600/400',
+                tags: ['CSS', 'Layout', 'Web Design', 'Grid']
+            },
+            {
+                id: 5,
+                title: 'Introduction to Web Accessibility (A11y)',
+                author: 'Sophia Lee',
+                date: '2023-11-15',
+                excerpt: 'Building an inclusive web is crucial. This post introduces web accessibility (A11y) principles, covering semantic HTML, ARIA roles, and keyboard navigation to ensure your site is usable by everyone.',
+                content: `
+                    <p>Web accessibility, often abbreviated as A11y (because there are 11 letters between 'A' and 'y'), is the practice of designing and developing websites so that people with disabilities can perceive, understand, navigate, and interact with them. It's not just about compliance; it's about creating a truly inclusive web.</p>
+                    <h3>Core Accessibility Principles:</h3>
+                    <ul>
+                        <li><strong>Perceivable:</strong> Information and user interface components must be presentable to users in ways they can perceive. (e.g., text alternatives for images, captions for videos).</li>
+                        <li><strong>Operable:</strong> User interface components and navigation must be operable. (e.g., keyboard navigation, sufficient time limits).</li>
+                        <li><strong>Understandable:</strong> Information and the operation of user interface must be understandable. (e.g., readable text, predictable functionality).</li>
+                        <li><strong>Robust:</strong> Content must be robust enough that it can be interpreted reliably by a wide variety of user agents, including assistive technologies.</li>
+                    </ul>
+                    <pre><code class="language-html">&lt;!-- Use semantic HTML --&gt;
+&lt;button&gt;Click Me&lt;/button&gt;
+&lt;a href="#"&gt;Learn More&lt;/a&gt;
+
+&lt;!-- Provide alt text for images --&gt;
+&lt;img src="image.jpg" alt="A detailed description of the image content"&gt;
+
+&lt;!-- Ensure keyboard focus and visual indicators --&gt;
+&lt;style&gt;
+    :focus {
+        outline: 2px solid blue; /* Visible focus indicator */
+        outline-offset: 2px;
+    }
+&lt;/style&gt;</code></pre>
+                    <p>Embracing accessibility from the start benefits everyone, leading to better SEO, improved usability, and a broader audience for your web applications.</p>
+                `,
+                image: 'https://picsum.photos/seed/web-accessibility-inclusive/600/400',
+                tags: ['Accessibility', 'A11y', 'UX', 'HTML']
+            },
+            {
+                id: 6,
+                title: 'CSS Custom Properties: Dynamic Styling Made Easy',
+                author: 'Michael Green',
+                date: '2023-11-20',
+                excerpt: 'Dive into the world of CSS Custom Properties (CSS Variables). Learn how to define, use, and dynamically change them with JavaScript for powerful and maintainable styling.',
+                content: `
+                    <p>CSS Custom Properties, often called CSS Variables, are a game-changer for writing maintainable and flexible stylesheets. They allow you to define values once and reuse them throughout your CSS, making it easy to manage themes, color palettes, and spacing.</p>
+                    <h3>Defining and Using Variables:</h3>
+                    <p>Variables are defined with two hyphens before their name (e.g., <code>--primary-color</code>) and accessed using the <code>var()</code> function.</p>
+                    <pre><code class="language-css">/* Define variables on the root element */
+:root {
+    --primary-color: #3498db;
+    --secondary-color: #2c3e50;
+    --spacing-md: 20px;
+}
+
+/* Use variables */
+.header {
+    background-color: var(--primary-color);
+    padding: var(--spacing-md);
+}
+
+.button {
+    color: var(--secondary-color);
+    border: 1px solid var(--primary-color);
+}</code></pre>
+                    <h3>Dynamic Changes with JavaScript:</h3>
+                    <p>One of the most powerful features is the ability to change CSS variables dynamically with JavaScript, enabling easy theme switching or real-time style adjustments.</p>
+                    <pre><code class="language-js">const root = document.documentElement; // Get the root HTML element
+
+// Change the primary color
+root.style.setProperty('--primary-color', '#e74c3c');
+
+// Get a variable's value
+const currentPrimaryColor = getComputedStyle(root).getPropertyValue('--primary-color');
+console.log(currentPrimaryColor); // outputs: #e74c3c</code></pre>
+                    <p>CSS Custom Properties simplify large stylesheets and open up new possibilities for dynamic and interactive styling directly in CSS.</p>
+                `,
+                image: 'https://picsum.photos/seed/css-variables-code/600/400',
+                tags: ['CSS', 'Styling', 'JavaScript', 'Web Development']
+            },
+            {
+                id: 7,
+                title: 'Understanding the DOM: Your Web Page\'s Structure',
+                author: 'Chris Wilson',
+                date: '2023-11-25',
+                excerpt: 'The Document Object Model (DOM) is the browser\'s representation of your HTML. Learn how to interact with it using JavaScript to create dynamic and interactive web experiences.',
+                content: `
+                    <p>At the heart of every dynamic web page is the Document Object Model (DOM). It's a programming interface for HTML and XML documents. It represents the page so that programs can change the document structure, style, and content. The DOM represents the document as nodes and objects; that way, programming languages can connect to the page.</p>
+                    <h3>Key DOM Concepts:</h3>
+                    <ul>
+                        <li><strong>Nodes:</strong> Everything in an HTML document is a node: elements, text, attributes, comments.</li>
+            
